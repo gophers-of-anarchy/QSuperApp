@@ -28,7 +28,7 @@
 - **Mock payment service integration:** Connect the system with a mock banking service to simulate financial transactions for advance and final payments.
 - **Processing payments:** Create APIs that manage the payment process, including capturing, processing, and verifying payment transactions.
 
-### Order Status Management (Saman)
+### Order Status Management (Arshia)
 - **Approve, reject, or update order status:** Program the logic that allows the admin to manage the lifecycle of orders, from approval to construction and final delivery.
 - **Notification system:** Implement backend functionality to notify users when there's a change in the status of their orders, enhancing the user experience.
 
