@@ -18,7 +18,7 @@ type EmailResponse struct {
 var (
 	host     = "smtp.gmail.com"
 	port     = "587"
-	from     = "taheshkey@gmail.com"
+	from     = "Q@gmail.com"
 	password = "zlafvgphwezlklai"
 	//password = os.Getenv("GmailPassword")
 )
