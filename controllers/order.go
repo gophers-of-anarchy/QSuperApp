@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func OrderStatusHandler(ctx echo.Context) error {
+func DecideOrderStatusHandler(ctx echo.Context) error {
 	var response models.ResponseOrderStatus
 	orderIDString := ctx.Request().URL.Query().Get("order_id")
 	status := ctx.Request().URL.Query().Get("status")
