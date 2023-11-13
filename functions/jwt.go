@@ -29,6 +29,7 @@ func GenerateTokens(username string, userID uint) (string, string, error) {
 
 	// REFRESH
 	refreshClaims := models.Claims{
+		UserID:   userID,
 		Username: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
