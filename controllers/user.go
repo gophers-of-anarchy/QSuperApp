@@ -2,16 +2,18 @@ package controllers
 
 import (
 	"QSuperApp/configs"
+	"QSuperApp/functions"
 	"QSuperApp/messages"
 	"QSuperApp/models"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
+	"log"
 	"net/http"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,8 +46,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	accessToken, refreshToken, err := functions.GenerateTokens(user.Username, user.ID)
+	if err != nil {
+		http.Error(w, messages.FailedToCreateAuthTokens, http.StatusInternalServerError)
+	}
+
+	response := models.RegisterResponse{AccessToken: accessToken, RefreshToken: refreshToken}
+
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(messages.RegisteredSuccessfully))
+	json.NewEncoder(w).Encode(response)
+
+	log.Printf("user with username: %v created at %v \n", user.Username, time.Now())
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -68,22 +81,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expirationTime := time.Now().Add(24 * time.Hour)
-	claims := &models.Claims{
-		UserID:   user.ID,
-		Username: user.Username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(models.JWTSecret)
+	accessToken, refreshToken, err := functions.GenerateTokens(user.Username, user.ID)
 	if err != nil {
-		http.Error(w, messages.FailedToCreateToken, http.StatusInternalServerError)
-		return
+		http.Error(w, messages.FailedToCreateAuthTokens, http.StatusInternalServerError)
 	}
 
-	w.Write([]byte(tokenString))
+	response := models.RegisterResponse{AccessToken: accessToken, RefreshToken: refreshToken}
+	json.NewEncoder(w).Encode(response)
 }
 
 func RestrictedAreaHandler(w http.ResponseWriter, r *http.Request) {

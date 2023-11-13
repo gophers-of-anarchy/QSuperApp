@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type User struct {
@@ -23,6 +24,11 @@ type RegisterRequest struct {
 	Password  string `json:"password"`
 	Email     string `json:"email"`
 	Cellphone string `json:"cellphone"`
+}
+
+type RegisterResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type LoginRequest struct {

@@ -5,11 +5,12 @@ import (
 	"QSuperApp/controllers"
 	"QSuperApp/middlewares"
 	services "QSuperApp/services/sms"
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func main() {

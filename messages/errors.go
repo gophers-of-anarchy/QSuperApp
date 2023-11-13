@@ -21,6 +21,7 @@ const FailedToCreateAccount = "Failed to create account"
 
 const FailedPasswordHashGeneration = "Failed to generate password hash"
 const FailedToCreateUser = "Failed to create user"
+const FailedToCreateAuthTokens = "Failed to create auth tokens"
 const UsernameOrPasswordIncorrect = "Username or password is incorrect"
 const FailedToCreateToken = "Failed to create token"
 const Unauthorized = "Unauthorized"
