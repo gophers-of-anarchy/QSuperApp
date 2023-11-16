@@ -3,11 +3,12 @@ package configs
 import (
 	"QSuperApp/models"
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
 	"os"
 	"sync"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
@@ -33,6 +34,17 @@ func ConnectToDatabase() {
 
 		// Migrate the schema
 		db.AutoMigrate(&models.User{})
+		db.AutoMigrate(&models.Order{})
+		db.AutoMigrate(&models.Airplane{})
+		db.AutoMigrate(&models.Customization{})
+		db.AutoMigrate(&models.Authentication{})
+		db.AutoMigrate(&models.Payment{})
+		db.AutoMigrate(&models.Role{})
+
+		// Apply additional migrations
+		// if err := db.Exec("ALTER TABLE users ADD COLUMN new_column VARCHAR(255);").Error; err != nil {
+		//return err
+		///}
 
 		DB = db
 	})

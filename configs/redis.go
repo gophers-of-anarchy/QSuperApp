@@ -26,7 +26,11 @@ func ConnectToRedis() {
 		if err := rdb.Ping(ctx).Err(); err != nil {
 			log.Fatalf("Failed to connect to redis: %v", err)
 		}
+<<<<<<< HEAD
 
+=======
+		//Redis = gs
+>>>>>>> 5d459e3b2242427f8fb133f65a714d6ae77c113a
 		Redis = rdb
 	})
 }
