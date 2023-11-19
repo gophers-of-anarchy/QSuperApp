@@ -50,6 +50,9 @@ func main() {
 
 	// Account endpoints
 	router.HandleFunc("/create_account", controllers.CreateAccountHandler).Methods("POST")
+	
+	// Order endpoints
+	router.HandleFunc("/create/order", controllers.CreateOrderHandler).Methods("POST")
 
 	// Money transfer endpoint
 	router.HandleFunc("/transfer", controllers.TransferHandler).Methods("POST")

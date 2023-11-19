@@ -18,6 +18,7 @@ const TooManyRequests = "Too many requests"
 const AccountNotFound = "Account not found"
 const FailedToCreateCard = "Failed to create card"
 const FailedToCreateAccount = "Failed to create account"
+const FailedToCreateOrder = "Failed to create order"
 
 const FailedPasswordHashGeneration = "Failed to generate password hash"
 const FailedToCreateUser = "Failed to create user"

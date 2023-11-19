@@ -5,6 +5,7 @@ const TransactionReceiverSMSText = "New transaction to your card [%s]\nAmount: %
 
 const CardCreatedSuccessfully = "Card created successfully"
 const AccountCreatedSuccessfully = "Account created successfully. Account ID: %d"
+const OrderCreatedSuccessfully = "Order created successfully. Order ID: %d"
 
 const TransferSuccessful = "Transfer successful"
 
