@@ -8,6 +8,7 @@ type Order struct {
 	AirplaneID uint `gorm:"not null"`
 
 	Number    string    `gorm:"not null"`
+	Type      string    `gorm:"not null;default:'Incomplete'"`
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
 	//FromUser User `gorm:"foreignKey:UserID"`
@@ -20,4 +21,5 @@ type Order struct {
 
 type OrderCreateRequest struct {
 	AirplaneID float64 `json:"AirplaneID"`
+	Type       string `json:"Type"`
 }

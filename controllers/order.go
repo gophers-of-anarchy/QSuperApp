@@ -18,7 +18,6 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Decode the JSON request body into OrderCreateRequest
 	var orderCreateReq models.OrderCreateRequest
 	err := json.NewDecoder(r.Body).Decode(&orderCreateReq)
 	if err != nil {
@@ -26,9 +25,13 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate the request
 	if err := orderCreateReq.Validate(configs.DB); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if orderCreateReq.Type != "Complete" && orderCreateReq.Type != "Incomplete" {
+		http.Error(w, "Invalid order type", http.StatusBadRequest)
 		return
 	}
 
@@ -36,18 +39,17 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	order := models.Order{
 		UserID:     userID,
 		AirplaneID: orderCreateReq.AirplaneID,
-		Number:     generateOrderNumber(), // You may need to implement a function to generate order numbers
+		Number:     generateOrderNumber(),
+		Type:       orderCreateReq.Type,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
 
-	// Save the new order to the database
 	if result := configs.DB.Create(&order); result.Error != nil {
 		http.Error(w, messages.FailedToCreateOrder, http.StatusInternalServerError)
 		return
 	}
 
-	// Respond with the new order ID
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf(messages.OrderCreatedSuccessfully, order.ID)))
 }
