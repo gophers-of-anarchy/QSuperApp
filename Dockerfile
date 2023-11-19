@@ -38,3 +38,8 @@ EXPOSE 8080
 # between attempts to connect to the database. Once the database is available,
 # the migration command is executed followed by the seeder: database/seeders/init_seeder.go
 ENTRYPOINT ["sh", "-c", "while ! nc -z db ${DATABASE_PORT}; do sleep 1; done && migrate -path migrations -database postgres://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db:${DATABASE_PORT}/${DATABASE_DB}?sslmode=disable up && go run database/seeders/init_seeder.go && ./app"]
+
+
+
+CMD ["./main"]
+
