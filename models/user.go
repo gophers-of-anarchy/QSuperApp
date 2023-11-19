@@ -17,6 +17,10 @@ type User struct {
 
 	// User has many accounts
 	Accounts []Account `gorm:"foreignKey:UserID"`
+	//Order    []Order   `gorm:"foreignKey:UserID"`
+
+	// User has many RoleUser
+	RoleUser []RoleUser `gorm:"foreignKey:UserID"`
 }
 
 type RegisterRequest struct {

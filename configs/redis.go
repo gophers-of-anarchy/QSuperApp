@@ -2,11 +2,12 @@ package configs
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"log"
 	"os"
 	"strconv"
 	"sync"
+
+	"github.com/go-redis/redis/v8"
 )
 
 var (
@@ -26,7 +27,6 @@ func ConnectToRedis() {
 		if err := rdb.Ping(ctx).Err(); err != nil {
 			log.Fatalf("Failed to connect to redis: %v", err)
 		}
-
 		Redis = rdb
 	})
 }
