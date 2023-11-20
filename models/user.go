@@ -30,6 +30,11 @@ type RegisterRequest struct {
 	Cellphone string `json:"cellphone"`
 }
 
+type RegisterResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
