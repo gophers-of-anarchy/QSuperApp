@@ -79,7 +79,7 @@ func DecideOrderStatusHandler(ctx echo.Context) error {
 	for _, user := range users {
 		if user.ID == customerOrder.UserID {
 			subject := fmt.Sprintf("Your order %s", status)
-			body := fmt.Sprintf("Your order with the following specifications was accepted by the admin:\nOrder-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
+			body := fmt.Sprintf("Your order with the following specifications was accepted by the admin:\nOrder-ID: %v\nAirplane-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrder.AirplaneID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
 			sendErr := services.SendMail(subject, body, []string{user.Email})
 			if sendErr != nil {
 				response.Message = messages.FailedToSendEmail
@@ -171,7 +171,7 @@ func ChangeOrderStatusHandler(ctx echo.Context) error {
 		if user.ID == customerOrder.UserID {
 			if status == "Under construction" {
 				subject := fmt.Sprintf("Your order is under construction")
-				body := fmt.Sprintf("Your order with the following specifications is getting ready:\nOrder-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
+				body := fmt.Sprintf("Your order with the following specifications is getting ready:\nOrder-ID: %v\nAirplane-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrder.AirplaneID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
 				sendErr := services.SendMail(subject, body, []string{user.Email})
 				if sendErr != nil {
 					response.Message = messages.FailedToSendEmail
@@ -183,7 +183,7 @@ func ChangeOrderStatusHandler(ctx echo.Context) error {
 				return nil
 			} else {
 				subject := fmt.Sprintf("Your order has been completed")
-				body := fmt.Sprintf("Your order with the following specifications has been completed and is ready for delivery:\nOrder-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
+				body := fmt.Sprintf("Your order with the following specifications has been completed and is ready for delivery:\nOrder-ID: %v\nAirplane-ID: %v\nVIP Seats: %v\nCockpit Facilities: %v\nAdditional Facilities: %v\n", customerOrder.ID, customerOrder.AirplaneID, customerOrderCustom.VIPSeatsCount, customerOrderCustom.CockpitFacilitiesLevel, customerOrderCustom.AdditionalFacilities)
 				sendErr := services.SendMail(subject, body, []string{user.Email})
 				if sendErr != nil {
 					response.Message = messages.FailedToSendEmail
