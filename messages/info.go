@@ -10,3 +10,6 @@ const TransferSuccessful = "Transfer successful"
 
 const RegisteredSuccessfully = "Registered successfully"
 const Welcome = "Welcome user #%d!"
+
+const OrderStatusChangedSuccessfully = "Order status changed successfully"
+const AuthenticatedSuccessfully = "User authenticated successfully"
