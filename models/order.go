@@ -16,3 +16,12 @@ type Order struct {
 	// Order has many Payment
 	Payment []Payment `gorm:"foreignKey:OrderID"`
 }
+
+type ResponseOrderStatus struct {
+	Message     string
+	OrderStatus string
+}
+
+type ResponseChangeOrderStatus struct {
+	Message string
+}

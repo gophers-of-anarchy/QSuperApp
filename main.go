@@ -44,6 +44,11 @@ func main() {
 	airplaneApiGroup.GET("/:id", controllers.Get)
 	airplaneApiGroup.DELETE("/:id", controllers.Delete)
 
+	// Order routes
+	orderManagementApiGroup := apiGroup.Group("/order-management")
+	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
+	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
+
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))
 }

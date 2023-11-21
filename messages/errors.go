@@ -18,6 +18,7 @@ const FailedToSendReceiverSMS = "Failed to send receiver's sms"
 const FailedToEncodeResponse = "Failed to encode response"
 const TooManyRequests = "Too many requests"
 const WrongStatus = "Wrong status for order"
+const WrongOrderID = "Wrong ID for order"
 
 const AccountNotFound = "Account not found"
 const FailedToCreateCard = "Failed to create card"
