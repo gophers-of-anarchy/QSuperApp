@@ -10,6 +10,6 @@ type Payment struct {
 	OrderID       uint      `gorm:"not null"`
 	CreatedAt     time.Time `gorm:"not null"`
 	UpdatedAt     time.Time `gorm:"not null"`
-	// Payment belongs to a Order
+	// Payment belongs to an Order
 	Order Order `gorm:"foreignKey:OrderID"`
 }
