@@ -14,6 +14,7 @@ type User struct {
 	Cellphone string    `gorm:"unique;not null"`
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
+	IsAdmin   bool      `gorm:"default:false"`
 
 	// User has many accounts
 	Accounts []Account `gorm:"foreignKey:UserID"`
