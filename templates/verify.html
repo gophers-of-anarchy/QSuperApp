@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #4285f4; /* Google blue color */
+        }
+        .response {
+            margin-top: 20px;
+        }
+        .response p {
+            margin: 10px 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .verify-btn {
+            background-color: #4285f4; /* Google green color */
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.15s ease;
+        }
+        .verify-btn:hover {
+            background-color: #2d8f2f; /* Darker green on hover */
+        }
+        input[type="hidden"] {
+            display: none; /* Hide hidden input fields */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{.Title}}</h1>
+        <div class="response">
+            <p><strong>Order ID:</strong> {{.OrderID}}</p>
+            <p><strong>Amount:</strong> {{.Amount}}</p>
+        </div>
+        <form action="/api/v1/payment/verify" method="post">
+            <input type="hidden" name="Token" value={{.Token}}>
+            <input type="submit" class="verify-btn" value="Verify Payment">
+        </form>
+    </div>
+</body>
+</html>
