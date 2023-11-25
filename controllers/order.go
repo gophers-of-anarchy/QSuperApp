@@ -198,3 +198,22 @@ func ChangeOrderStatusHandler(ctx echo.Context) error {
 	}
 	return nil
 }
+
+func GetAllOrderHandler(ctx echo.Context) error {
+	page, _ := strconv.Atoi(ctx.QueryParams().Get("page"))
+	pageSize, _ := strconv.Atoi(ctx.QueryParams().Get("pageSize"))
+	sort := ctx.QueryParams().Get("sortBy")
+	order := ctx.QueryParams().Get("sortOrder")
+
+	var orders []models.Order
+	count := configs.DB.Find(&orders).RowsAffected
+	configs.DB.Order(sort + " " + order).Limit(pageSize).Offset(page * pageSize).Find(&orders)
+
+	return ctx.JSON(
+		http.StatusOK,
+		models.GetAllOrderDTO{
+			Orders:     orders,
+			TotalCount: count,
+		},
+	)
+}

@@ -17,6 +17,11 @@ type Order struct {
 	Payment []Payment `gorm:"foreignKey:OrderID"`
 }
 
+type GetAllOrderDTO struct {
+	Orders     []Order
+	TotalCount int64
+}
+
 type ResponseOrderStatus struct {
 	Message     string
 	OrderStatus string
