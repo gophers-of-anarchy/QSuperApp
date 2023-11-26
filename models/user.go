@@ -15,7 +15,6 @@ type User struct {
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
 	IsAdmin   bool      `gorm:"default:false"`
-	Role      string    `gorm:"not null"`
 	// User has many accounts
 	Accounts []Account `gorm:"foreignKey:UserID"`
 	//Order    []Order   `gorm:"foreignKey:UserID"`
