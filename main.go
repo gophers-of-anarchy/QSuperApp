@@ -53,6 +53,7 @@ func main() {
 	orderManagementApiGroup := apiGroup.Group("/order-management")
 	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
 	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
+	orderManagementApiGroup.GET("/admin/orders/list", controllers.GetAllOrderHandler)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))
