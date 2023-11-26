@@ -5,30 +5,26 @@ import (
 	"QSuperApp/functions"
 	"QSuperApp/messages"
 	"QSuperApp/models"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var req models.RegisterRequest
-	err := decoder.Decode(&req)
+func RegisterHandler(ctx echo.Context) error {
+	req := models.RegisterRequest{}
+	err := ctx.Bind(&req)
 	if err != nil {
-		http.Error(w, messages.InvalidRequestBody, http.StatusBadRequest)
-		return
+		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		http.Error(w, messages.FailedPasswordHashGeneration, http.StatusInternalServerError)
-		return
+		return ctx.JSON(http.StatusBadRequest, messages.FailedPasswordHashGeneration)
 	}
 
 	user := models.User{
@@ -42,52 +38,46 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = configs.DB.Create(&user).Error
 	if err != nil {
-		http.Error(w, messages.FailedToCreateUser, http.StatusInternalServerError)
-		return
+		return ctx.JSON(http.StatusInternalServerError, messages.FailedToCreateUser)
 	}
 
 	accessToken, refreshToken, err := functions.GenerateTokens(user.Username, user.ID)
 	if err != nil {
-		http.Error(w, messages.FailedToCreateAuthTokens, http.StatusInternalServerError)
+		return ctx.JSON(http.StatusInternalServerError, messages.FailedToCreateAuthTokens)
 	}
 
 	response := models.RegisterResponse{AccessToken: accessToken, RefreshToken: refreshToken}
 
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(messages.RegisteredSuccessfully))
-	json.NewEncoder(w).Encode(response)
-
-	log.Printf("user with username: %v created at %v \n", user.Username, time.Now())
+	return ctx.JSON(
+		http.StatusOK,
+		response,
+	)
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var req models.LoginRequest
-	err := decoder.Decode(&req)
+func LoginHandler(ctx echo.Context) error {
+	req := models.LoginRequest{}
+	err := ctx.Bind(&req)
 	if err != nil {
-		http.Error(w, messages.InvalidRequestBody, http.StatusBadRequest)
-		return
+		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
 	}
 
 	var user models.User
 	result := configs.DB.Where("username = ?", req.Username).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		http.Error(w, messages.UsernameOrPasswordIncorrect, http.StatusUnauthorized)
-		return
+		return ctx.JSON(http.StatusUnauthorized, messages.UsernameOrPasswordIncorrect)
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		http.Error(w, messages.UsernameOrPasswordIncorrect, http.StatusUnauthorized)
-		return
+		return ctx.JSON(http.StatusUnauthorized, messages.UsernameOrPasswordIncorrect)
 	}
-
 	accessToken, refreshToken, err := functions.GenerateTokens(user.Username, user.ID)
 	if err != nil {
-		http.Error(w, messages.FailedToCreateAuthTokens, http.StatusInternalServerError)
+		return ctx.JSON(http.StatusInternalServerError, messages.FailedToCreateAuthTokens)
 	}
-
 	response := models.RegisterResponse{AccessToken: accessToken, RefreshToken: refreshToken}
-	json.NewEncoder(w).Encode(response)
+	return ctx.JSON(
+		http.StatusOK,
+		response,
+	)
 }
 
 func RestrictedAreaHandler(w http.ResponseWriter, r *http.Request) {

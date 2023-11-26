@@ -36,6 +36,11 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
+	// Auth routes
+	auth := apiGroup.Group("/auth")
+	auth.POST("/register", controllers.RegisterHandler)
+	auth.POST("/login", controllers.LoginHandler)
+
 	// Airplane routes
 	airplaneApiGroup := apiGroup.Group("/airplane")
 	airplaneApiGroup.POST("/add", controllers.Add)
