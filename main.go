@@ -3,6 +3,8 @@ package main
 import (
 	"QSuperApp/configs"
 	"QSuperApp/controllers"
+	"html/template"
+	"io"
 	"log"
 	"os"
 
@@ -10,6 +12,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
+
+type Template struct {
+	templates *template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
+}
 
 func main() {
 	// Check application environment
@@ -36,10 +46,17 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
+	// Load templates
+	t := &Template{
+		templates: template.Must(template.ParseGlob("templates/*.html")),
+	}
+	e.Renderer = t
+
 	// Auth routes
 	auth := apiGroup.Group("/auth")
 	auth.POST("/register", controllers.RegisterHandler)
 	auth.POST("/login", controllers.LoginHandler)
+
 
 	// Airplane routes
 	airplaneApiGroup := apiGroup.Group("/airplane")
@@ -54,6 +71,14 @@ func main() {
 	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
 	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
 	orderManagementApiGroup.GET("/admin/orders/list", controllers.GetAllOrderHandler)
+
+	// Payment routes
+	paymentApiGroup := apiGroup.Group("/payment")
+	paymentApiGroup.POST("/advance", controllers.AdvancePaymentHandler)
+	paymentApiGroup.POST("/finalize", controllers.FinalPaymentHandler)
+	paymentApiGroup.POST("/verifypage", controllers.VerifyPaymentPageHandler)
+	paymentApiGroup.POST("/verify", controllers.VerifyPaymentHandler)
+	paymentApiGroup.GET("/orders/:orderId", controllers.VerifyPaymentHandler)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))
