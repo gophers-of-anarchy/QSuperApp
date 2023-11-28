@@ -52,6 +52,12 @@ func main() {
 	}
 	e.Renderer = t
 
+	// Auth routes
+	auth := apiGroup.Group("/auth")
+	auth.POST("/register", controllers.RegisterHandler)
+	auth.POST("/login", controllers.LoginHandler)
+
+
 	// Airplane routes
 	airplaneApiGroup := apiGroup.Group("/airplane")
 	airplaneApiGroup.POST("/add", controllers.Add)
@@ -64,6 +70,7 @@ func main() {
 	orderManagementApiGroup := apiGroup.Group("/order-management")
 	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
 	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
+	orderManagementApiGroup.GET("/admin/orders/list", controllers.GetAllOrderHandler)
 
 	// Payment routes
 	paymentApiGroup := apiGroup.Group("/payment")
