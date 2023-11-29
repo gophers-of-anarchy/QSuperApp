@@ -227,14 +227,24 @@ func VerifyPaymentHandler(ctx echo.Context) error {
 }
 
 func GetOrderPaymentDetailsHandler(ctx echo.Context) error {
-	orderId := ctx.Param("orderId")
+    orderId := ctx.Param("orderId")
 
-	var payments []models.Payment
-	paymentResult := configs.DB.Where("order_id = ?", orderId).Find(&payments)
-	if paymentResult.Error != nil {
-		log.Println("Error finding payments:", paymentResult.Error)
-		return ctx.JSON(http.StatusInternalServerError, messages.PaymentNotFound)
-	}
-	// return the payments as result
-	return ctx.JSON(http.StatusOK, payments)
+    var payments []models.PaymentWithoutOrder
+    paymentResult := configs.DB.Model(&models.Payment{}).Where("order_id = ?", orderId).Find(&payments)
+    if paymentResult.Error != nil {
+        log.Println("Error finding payments:", paymentResult.Error)
+        return ctx.JSON(http.StatusInternalServerError, messages.PaymentNotFound)
+    }
+
+    var paymentsWithStrings []models.PaymentWithoutOrderWithStrings
+    for _, payment := range payments {
+        paymentsWithStrings = append(paymentsWithStrings, models.PaymentWithoutOrderWithStrings{
+            PaymentWithoutOrder: payment,
+            PaymentTypeString:   models.PaymentTypeToString(payment.PaymentType),
+            PaymentStatusString: models.PaymentStatusToString(payment.PaymentStatus),
+        })
+    }
+
+    // return the payments as result
+    return ctx.JSON(http.StatusOK, paymentsWithStrings)
 }
