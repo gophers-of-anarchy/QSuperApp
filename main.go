@@ -3,6 +3,7 @@ package main
 import (
 	"QSuperApp/configs"
 	"QSuperApp/controllers"
+	"QSuperApp/middlewares"
 	"html/template"
 	"io"
 	"log"
@@ -57,7 +58,6 @@ func main() {
 	auth.POST("/register", controllers.RegisterHandler)
 	auth.POST("/login", controllers.LoginHandler)
 
-
 	// Airplane routes
 	airplaneApiGroup := apiGroup.Group("/airplane")
 	airplaneApiGroup.POST("/add", controllers.Add)
@@ -74,11 +74,14 @@ func main() {
 
 	// Payment routes
 	paymentApiGroup := apiGroup.Group("/payment")
+	paymentApiGroup.Use(middlewares.AuthMiddleware)
 	paymentApiGroup.POST("/advance", controllers.AdvancePaymentHandler)
 	paymentApiGroup.POST("/finalize", controllers.FinalPaymentHandler)
-	paymentApiGroup.POST("/verifypage", controllers.VerifyPaymentPageHandler)
-	paymentApiGroup.POST("/verify", controllers.VerifyPaymentHandler)
 	paymentApiGroup.GET("/orders/:orderId", controllers.VerifyPaymentHandler)
+
+	verifyPaymentGroup := apiGroup.Group("/verify")
+	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
+	verifyPaymentGroup.POST("/payment", controllers.VerifyPaymentHandler)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))

@@ -13,3 +13,6 @@ const Welcome = "Welcome user #%d!"
 
 const OrderStatusChangedSuccessfully = "Order status changed successfully"
 const AuthenticatedSuccessfully = "User authenticated successfully"
+
+const FinalIsAlreadyDone = "Final payment is already done"
+const AdvanceIsAlreadyDone = "Advance payment is already done"
