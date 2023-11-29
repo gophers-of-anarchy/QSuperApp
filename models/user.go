@@ -23,6 +23,18 @@ type User struct {
 	RoleUser []RoleUser `gorm:"foreignKey:UserID"`
 }
 
+type GetUserResponse struct {
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Cellphone string `json:"cellphone"`
+}
+
+type UpdateUserRequest struct {
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Cellphone string `json:"cellphone"`
+}
+
 type RegisterRequest struct {
 	Username  string `json:"username"`
 	Password  string `json:"password"`
@@ -44,6 +56,19 @@ type Claims struct {
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
 	jwt.StandardClaims
+}
+
+type UpdateUserResponse struct {
+	Message string `json:"message"`
+}
+type UserResponse struct {
+	ID        uint      `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	Cellphone string    `json:"cellphone"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	IsAdmin   bool      `json:"is_admin"`
 }
 
 var JWTSecret = []byte("secret")

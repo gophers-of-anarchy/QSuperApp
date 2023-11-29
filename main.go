@@ -4,11 +4,12 @@ import (
 	"QSuperApp/configs"
 	"QSuperApp/controllers"
 	"QSuperApp/middlewares"
-	"github.com/labstack/echo/v4/middleware"
 	"html/template"
 	"io"
 	"log"
 	"os"
+
+	"github.com/labstack/echo/v4/middleware"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -58,6 +59,13 @@ func main() {
 	auth.POST("/register", controllers.RegisterHandler)
 	auth.POST("/login", controllers.LoginHandler)
 
+	// Account routes
+	accountManagementApiGroup := apiGroup.Group("/users")
+	accountManagementApiGroup.POST("/register", controllers.CreateAccountHandler, middlewares.AuthMiddleware)
+	accountManagementApiGroup.PUT("/profile", controllers.UpdateUserHandler, middlewares.AuthMiddleware)
+	accountManagementApiGroup.GET("/profile", controllers.GetUserHandler, middlewares.AuthMiddleware)
+	accountManagementApiGroup.GET("/profile/:id", controllers.GetUserByIdHandler, middlewares.AuthAndAdminMiddleware)
+
 	// Airplane routes
 	airplaneApiGroup := apiGroup.Group("/airplane")
 	airplaneApiGroup.POST("/add", controllers.Add)
@@ -82,12 +90,6 @@ func main() {
 	verifyPaymentGroup := apiGroup.Group("/verify")
 	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
 	verifyPaymentGroup.POST("/payment", controllers.VerifyPaymentHandler)
-  
-	// Account routes
-	accountManagementApiGroup := apiGroup.Group("/account")
-	accountManagementApiGroup.POST("/create-account", controllers.CreateAccountHandler, middlewares.AuthMiddleware)
-	accountManagementApiGroup.PATCH("/update-account/:id", controllers.UpdateAccount, middlewares.AuthMiddleware)
-
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))

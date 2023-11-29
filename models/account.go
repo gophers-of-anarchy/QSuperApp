@@ -17,10 +17,6 @@ type Account struct {
 	Cards []Card `gorm:"foreignKey:AccountID"`
 }
 
-type UpdateAccountRequest struct {
-	Name string `json:"name"`
-}
-
 type AccountCreateRequest struct {
 	Name    string  `json:"name"`
 	Balance float64 `json:"balance"`
