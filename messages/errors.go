@@ -34,6 +34,11 @@ const FailedToCreateToken = "Failed to create token"
 const Unauthorized = "Unauthorized"
 const InvalidToken = "Invalid token"
 
+const OrderNotFound = "Order not found"
+const PaymentError = "Error making payment"
+const PaymentNotFound = "Payment not found"
+const PaymentVerificationError = "Error verifying payment"
+
 const InvalidUserType = "Invalid user type"
 const ErrUnauthorizedAccess = "User does not have access"
 
