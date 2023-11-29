@@ -1,219 +1,200 @@
-# Q Super App
+# QSuperApp Main Application
 
-## Component #1 Tasks
+This Go application is the main entry point for the QSuperApp. It sets up an Echo web server with various routes for handling authentication, user accounts, airplanes, orders, and payments.
 
-### Database Design and Setup (Narges)
-- **Design the database schema for airplanes, users, orders, customizations, and payments:** Map out a detailed schema that captures all necessary data and relationships for the application's core functionalities.
-- **Document the database design:** Create thorough documentation that covers all aspects of the database schema, which can be used for future reference and by new team members.
-- **Set up the database using an ORM:** Configure the selected ORM to connect to the database and set up the initial models based on the designed schema.
-- **Implement database migrations:** Write migration scripts to create and update the database schema without downtime or data loss.
+## Dependencies
 
-### Authentication and User Management (Parsa)
-- **Implement JWT-based authentication:** Code a secure authentication mechanism that uses JWT for verifying user identities and handling sessions.
-- **Create user roles and permissions:** Establish a system for role-based access control that defines what each user type can see and do within the application.
-- **Develop functionality to create and manage user accounts:** Build robust APIs to allow users to register, update their profiles, and manage their accounts securely.
+- [Echo](https://github.com/labstack/echo/v4): A high-performance, minimalist Go web framework.
+- [Joho/godotenv](https://github.com/joho/godotenv): A Go (golang) port of the Ruby dotenv project (Loads environment variables from `.env` files).
+- [PostgreSQL](https://www.postgresql.org/): A powerful, open-source relational database system.
 
-### Airplane Management (Saman)
-- **API endpoints for admin to manage airplanes:** Create a set of API endpoints to handle the creation, modification, retrieval, and deletion of airplane data by the admin.
-- **Classify airplanes by type:** Write the business logic that enables airplanes to be categorized and filtered by their respective classes - military, passenger, or training.
-- **Functionality for admins to view and manage orders:** Develop backend functionalities that allow admins to monitor and manage all orders, including updating their statuses.
+## Application Structure
 
-### Order System and Customization (MHosein)
-- **API endpoints for order placement and viewing:** Develop endpoints for users to request the construction of airplanes and view both active and past orders.
-- **Customization options for airplanes:** Implement the backend logic that handles various customization options chosen by the users for different types of airplanes.
-- **Save incomplete orders:** Code a system that can persistently store the progress of incomplete orders so that users can return and complete their personalization later.
+The application is structured as follows:
 
-### Pricing and Payments (Mohsen)
-- **Pricing algorithm based on selections:** Construct an algorithm that dynamically calculates the cost of the airplane based on the base price and added customizations.
-- **Mock payment service integration:** Connect the system with a mock banking service to simulate financial transactions for advance and final payments.
-- **Processing payments:** Create APIs that manage the payment process, including capturing, processing, and verifying payment transactions.
+- **Main Package**: `main`
+  - Imports necessary packages and initializes the application.
+  - Connects to the PostgreSQL database using configurations from the `.env` file.
 
-### Order Status Management (Arshia)
-- **Approve, reject, or update order status:** Program the logic that allows the admin to manage the lifecycle of orders, from approval to construction and final delivery.
-- **Notification system:** Implement backend functionality to notify users when there's a change in the status of their orders, enhancing the user experience.
+- **Template Struct**: `Template`
+  - Implements a custom template renderer for rendering HTML templates using the `html/template` package.
 
-### Testing (Narges & MHosein)
-- **Write unit tests:** Develop a suite of unit tests to verify the functionality of individual components or methods.
-- **Integration tests for API and database:** Write comprehensive integration tests that ensure the application components work together as expected, particularly for API endpoints and database interactions.
+- **Main Function**: `main()`
+  - Checks the application environment and loads environment variables from the `.env` file if not set.
+  - Initializes an Echo instance and sets up middleware for logging, recovery, and CORS.
+  - Connects to the PostgreSQL database.
+  - Configures the application to render HTML templates.
+  - Defines API routes for authentication, account management, airplanes, orders, and payments.
+  - Runs the Echo server on port `8080`.
 
-### API Documentation (Parsa)
-- **Comprehensive API documentation:** Utilize a tool like Swagger to produce user-friendly and interactive API documentation.
-- **Document all endpoints:** Make sure all API endpoints are well-documented, including clear descriptions, required parameters, and example responses.
+## API Routes
 
-### Performance and Security Considerations (All Developers)
-- **Optimize queries for performance:** Ensure that database queries are efficient and optimized to handle the expected load.
-- **Secure API endpoints:** Implement best practices to make API endpoints secure against common security threats and vulnerabilities.
+### Auth Routes: `/api/v1/auth`
 
-### Maintenance and Clean Code (All Developers)
-- **Refactor code for clean code principles:** Regularly review and refactor code to align with clean coding principles, aiming for readability and maintainability.
-- **Regular code reviews:** Engage in peer code reviews to maintain high code quality and to share knowledge within the team.
+- `POST /register`: Handles user registration.
 
-### Cross-cutting Concerns (All Developers)
-- **Write appropriate commit messages:** Practice writing clear, concise commit messages that accurately reflect the changes made.
-- **Comment and document code:** Ensure code is accompanied by relevant comments and documentation to provide context and clarity.
-- **Ensure well-tested work:** Vigilantly write and maintain tests for new and existing features to reduce bugs and improve code quality.
-- **Follow security best practices:** Consistently apply security best practices throughout all coding activities to mitigate potential risks.
+    **Request:**
+    ```json
+    {
+        "username": "example_user",
+        "password": "example_password",
+        "email": "example@gmail.com",
+        "cellphone": "09999999999"
+    }
+
+- `POST /login`: Handles user login.
+
+    **Request:**
+    ```json
+    {
+        "username": "example_user",
+        "password": "example_password"
+    }
+
+### Account Management Routes: `/api/v1/users`
+
+- `POST /register`: Creates a new user account (requires authentication)
+
+    **Request**
+    ```json
+    {
+        "name": "example"
+    }
+
+- `PUT /profile`: Updates user profile (requires authentication)
+    
+    **Request**
+    ```json
+    {
+        "username": "example",
+        "email": "updated_email@example.com",
+        "cellphone": "0999999999"
+    }
+
+- `GET /profile/:id`: Retrieves user profile by ID (requires authentication and admin privileges).
+
+    **Request**
+    ```json
+    {
+        "username": "example",
+        "email": "example@gmail.com",
+        "cellphone": "099999999",
+        "created_at": "example",
+        "updated_at": "example",
+        "is_admin": false
+    }
+
+### Airplane Routes: `/api/v1/airplane`
+
+- `POST /add/`:  Adds a new airplane.
+    
+    **Request**
+    ```json
+    {
+        "type": "example",
+        "base_price": 1.5,
+        "number": "example"
+    }
+
+- `PUT /update/`: Updates an airplane.
+
+    **Request**
+    ```json
+    {
+        "type": "example",
+        "base_price": 1.5,
+        "number": "example",
+        "ID": 1
+    }
+
+- `GET /all/`: Get all airplanes.
+
+    **Response**
+    ```json
+    [
+        {
+            "id": 1,
+            "type": "example",
+            "base_price": 1.5,
+            "number": "example",
+            "created_at": "2000/1/1",
+            "updated_at": "2000/1/1"
+        }
+    ]
+    
+- `GET /:id/`: Get an airplane detail
+    **Response**
+    ```json
+    
+    {
+        "id": 1,
+        "type": "example",
+        "base_price": 1.5,
+        "number": "example",
+        "created_at": "2000/1/1",
+        "updated_at": "2000/1/1"
+    }
+
+-  `DELETE /:id/`: Delete an airplane
+
+### Order Routes: `/api/v1/order-management`
+
+- `POST /admin/orders/?order_id=<order_id>&status=<status>`: Change order status by admin
+  
+    **Response**
+    ```json
+    {
+        "message": "Order status changed successfully",
+        "OrderStatus": "Approved"
+    }
 
 
-## "Recommended" Models
-
-### User Model
-- **Attributes:**
-    - User ID
-    - Name
-    - Email
-    - Password (hashed)
-    - Role (e.g., admin, military, passenger, educational)
-    - Account status
-    - Created at
-    - Updated at
-
-### Airplane Model
-- **Attributes:**
-    - Airplane ID
-    - Type (military, passenger, training)
-    - Base price
-    - Specifications (e.g., range, capacity, engine type)
-    - Created at
-    - Updated at
-
-### Order Model
-- **Attributes:**
-    - Order ID
-    - User ID (Foreign Key from User Model)
-    - Airplane ID (Foreign Key from Airplane Model)
-    - Customization details (e.g., VIP seats, painting, interior facilities)
-    - Status (pending, approved, under construction, built, delivered)
-    - Price
-    - Advance payment status
-    - Final payment status
-    - Created at
-    - Updated at
-
-### Customization Model (could be part of Order Model or separate based on complexity)
-- **Attributes:**
-    - Customization ID
-    - Order ID (Foreign Key from Order Model)
-    - VIP seats count
-    - Exterior painting design and color
-    - Seat configuration
-    - Additional facilities (TV, sockets, etc.)
-    - Cockpit facilities level
-    - Created at
-    - Updated at
-
-### Payment Model
-- **Attributes:**
-    - Payment ID
-    - Order ID (Foreign Key from Order Model)
-    - User ID (Foreign Key from User Model)
-    - Amount
-    - Payment type (advance, final)
-    - Payment status (completed, pending, failed)
-    - Transaction ID (from Banktest or other payment gateway)
-    - Created at
-    - Updated at
-
-### Authentication Model (usually not persisted but can be for tokens or sessions)
-- **Attributes:**
-    - Token ID
-    - User ID (Foreign Key from User Model)
-    - JWT Token
-    - Expiry
-    - Created at
+- `POST /admin/orders/status/?order_id=<order_id>&status=<status>`: 
 
 
-## "Recommended" API Endpoints
+- `GET /admin/orders/list/`: Get all orders
+    **Response**
+    ```json
+    [
+        {
+            "id": "example",
+            "user_id": 1,
+            "airplane_id": 1,
+            "status": "examole",
+            "number": "example",
+            "created_at": "2000/1/1",
+            "updated_at": "2000/1/1",
+        }
+    ]
+    
+### Advance Payment `/api/v1/payment`
 
-### User-related Endpoints
+- `POST /advance/`: advance payment
+    **Request**
+    ```json
+    {
+        "order_id": 1
+    }
 
-- **POST /users/register**
-    - Register a new user account.
+- `POST /finalize`: finalize payment
+    **Request**
+    ```json
+    {
+        "order_id": 1 
+    }
 
-- **POST /users/login**
-    - Authenticate a user and return a JWT token.
+- `GET /orders/:order_id/`: Get order payment status
+    **Response**
+    ```json
+    {
+        "id": "example",
+        "amount": 1
+    }
 
-- **GET /users/profile**
-    - Retrieve the logged-in user's profile information.
 
-- **PUT /users/profile**
-    - Update the logged-in user's profile information.
+## How to Run
 
-- **GET /users/:id**
-    - Retrieve a specific user's profile (admin only).
+To run the application, execute the following command:
 
-### Airplane-related Endpoints
-
-- **POST /airplanes**
-    - Admin can add a new airplane with specifications.
-
-- **GET /airplanes**
-    - List all airplanes, possibly with query parameters for filtering by class (military, passenger, training).
-
-- **GET /airplanes/:id**
-    - Get details of a specific airplane.
-
-- **PUT /airplanes/:id**
-    - Admin can update specifications of an existing airplane.
-
-- **DELETE /airplanes/:id**
-    - Admin can remove an airplane from the listing.
-
-### Order-related Endpoints
-
-- **POST /orders**
-    - Place a new order for an airplane with customizations.
-
-- **GET /orders**
-    - Retrieve a list of orders placed by the logged-in user.
-
-- **GET /orders/:id**
-    - Retrieve details of a specific order.
-
-- **PUT /orders/:id/customize**
-    - Update the customization details of an existing order.
-
-- **PUT /orders/:id/status**
-    - Admin can update the status of an order (e.g., approved, under construction, built).
-
-- **GET /admin/orders**
-    - Admin can view all orders placed by all users.
-
-### Payment-related Endpoints
-
-- **POST /payments/advance**
-    - Process an advance payment for an order.
-
-- **POST /payments/finalize**
-    - Process the final payment upon order completion.
-
-- **GET /payments/orders/:orderId**
-    - Retrieve payment details for a specific order.
-
-### Admin-specific Endpoints (for managing the application)
-
-- **GET /admin/users**
-    - Retrieve a list of all users and their roles.
-
-- **PUT /admin/users/:id**
-    - Update user roles or statuses (activate, deactivate accounts).
-
-- **DELETE /admin/users/:id**
-    - Delete a user account.
-
-- **GET /admin/orders/pending**
-    - Retrieve a list of all pending orders for review.
-
-- **PUT /admin/orders/:id/approve**
-    - Approve a specific order.
-
-- **PUT /admin/orders/:id/reject**
-    - Reject a specific order.
-
-### Reporting and Analytics Endpoints (optional for future development)
-
-- **GET /admin/reports/sales**
-    - Get sales reports for a given time period.
-
-- **GET /admin/reports/user-activity**
-    - Get user activity reports.
+```bash
+go run main.go
