@@ -4,6 +4,7 @@ import (
 	"QSuperApp/configs"
 	"QSuperApp/controllers"
 	"QSuperApp/middlewares"
+	"github.com/labstack/echo/v4/middleware"
 	"html/template"
 	"io"
 	"log"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Template struct {
@@ -37,7 +37,7 @@ func main() {
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
 
-	// Middleware
+	//Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
