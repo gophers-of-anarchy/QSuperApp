@@ -65,10 +65,11 @@
         <h1>{{.Title}}</h1>
         <div class="response">
             <p><strong>Order ID:</strong> {{.OrderID}}</p>
-            <p><strong>Amount:</strong> {{.Amount}}</p>
+            <p><strong>Amount:</strong> {{printf "%.0f" .Amount}}</p>
         </div>
-        <form action="/api/v1/payment/verify" method="post">
+        <form action="/api/v1/verify/payment" method="post">
             <input type="hidden" name="Token" value={{.Token}}>
+            <input type="hidden" name="OrderId" value={{.OrderID}}>
             <input type="submit" class="verify-btn" value="Verify Payment">
         </form>
     </div>

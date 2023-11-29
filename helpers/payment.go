@@ -20,5 +20,6 @@ func CalculateAirplaneTotalPrice(customization models.Customization) float64 {
 	totalPrice += float64(customization.SeatConfiguration) * SeatConfiguration
 	totalPrice += float64(customization.AdditionalFacilities) * AdditionalFacilities
 	totalPrice += float64(customization.CockpitFacilitiesLevel) * CockpitFacilitiesLevel
-	return totalPrice
+	// becauase of Rial we multiply by 10 :D
+	return totalPrice * 10
 }

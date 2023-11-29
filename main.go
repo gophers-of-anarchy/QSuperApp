@@ -9,9 +9,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Template struct {
@@ -37,7 +38,7 @@ func main() {
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
 
-	// Middleware
+	//Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
@@ -81,11 +82,14 @@ func main() {
 
 	// Payment routes
 	paymentApiGroup := apiGroup.Group("/payment")
+	paymentApiGroup.Use(middlewares.AuthMiddleware)
 	paymentApiGroup.POST("/advance", controllers.AdvancePaymentHandler)
 	paymentApiGroup.POST("/finalize", controllers.FinalPaymentHandler)
-	paymentApiGroup.POST("/verifypage", controllers.VerifyPaymentPageHandler)
-	paymentApiGroup.POST("/verify", controllers.VerifyPaymentHandler)
 	paymentApiGroup.GET("/orders/:orderId", controllers.VerifyPaymentHandler)
+
+	verifyPaymentGroup := apiGroup.Group("/verify")
+	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
+	verifyPaymentGroup.POST("/payment", controllers.VerifyPaymentHandler)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))

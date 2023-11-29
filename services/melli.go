@@ -38,7 +38,7 @@ func Payment(Amount float64, orderID uint) (models.MelliPaymentResponse, error) 
 	requestData := models.PaymentRequest{
 		MerchantId:    "1186",
 		TerminalId:    "7NDIXXW0",
-		ReturnUrl:     "http://localhost:8080/api/v1/payment/verifypage",
+		ReturnUrl:     "http://localhost:8080/api/v1/verify/page",
 		LocalDateTime: formattedTime,
 		OrderId:       orderID,
 		Amount:        int(Amount),
@@ -145,9 +145,8 @@ func VerifyPayment(token string) (models.MelliVerifyPaymentResponse, error) {
 		log.Println("Failed to read response body:", err)
 		return responseObj, err
 	}
-
 	err = json.Unmarshal(respBody, &responseObj)
-	fmt.Println(string(responseObj.Description))
+
 	if err != nil {
 		log.Println("Failed to unmarshal JSON:", err)
 		return responseObj, err
