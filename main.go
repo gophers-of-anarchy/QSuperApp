@@ -5,11 +5,12 @@ import (
 	"QSuperApp/controllers"
 	"QSuperApp/middlewares"
 	services "QSuperApp/services/sms"
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -50,9 +51,9 @@ func main() {
 
 	// Account endpoints
 	router.HandleFunc("/create_account", controllers.CreateAccountHandler).Methods("POST")
-	
+
 	// Order endpoints
-	router.HandleFunc("/create/order", controllers.CreateOrderHandler).Methods("POST")
+	router.HandleFunc("/create/order", controllers.CreateOrderHandler, middlewares.AuthMiddleware).Methods("POST")
 
 	// Money transfer endpoint
 	router.HandleFunc("/transfer", controllers.TransferHandler).Methods("POST")
