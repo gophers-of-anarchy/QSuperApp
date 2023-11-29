@@ -169,7 +169,7 @@ The application is structured as follows:
     
 ### Advance Payment `/api/v1/payment`
 
-- `POST /advance/`: advance payment
+- `POST /advance`: advance payment
     **Request**
     ```json
     {
@@ -183,13 +183,39 @@ The application is structured as follows:
         "order_id": 1 
     }
 
-- `GET /orders/:order_id/`: Get order payment status
+- `GET /orders/:order_id`: Get order payment status
     **Response**
     ```json
-    {
-        "id": "example",
-        "amount": 1
-    }
+    [
+        {
+            "ID": 3,
+            "CreatedAt": "2023-11-29T23:13:33.648297+03:30",
+            "UpdatedAt": "2023-11-29T23:13:33.814969+03:30",
+            "Amount": 7600000,
+            "PaymentType": 0,
+            "PaymentStatus": 2,
+            "OrderID": 1,
+            "PaymentTypeString": "Advance",
+            "PaymentStatusString": "Failed"
+        },
+        {
+            "ID": 6,
+            "CreatedAt": "2023-11-29T23:18:39.834706+03:30",
+            "UpdatedAt": "2023-11-29T23:18:39.835082+03:30",
+            "Amount": 7600000,
+            "PaymentType": 1,
+            "PaymentStatus": 0,
+            "OrderID": 1,
+            "PaymentTypeString": "Final",
+            "PaymentStatusString": "Completed"
+        }
+    ]
+
+### Verify Payment `/api/v1/verify`
+
+- `POST /page`: 
+
+- `POST /payment`
 
 
 ## How to Run
