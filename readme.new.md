@@ -167,6 +167,29 @@ The application is structured as follows:
         }
     ]
     
+### Advance Payment `/api/v1/payment`
+
+- `POST /advance/`: advance payment
+    **Request**
+    ```json
+    {
+        "order_id": 1
+    }
+
+- `POST /finalize`: finalize payment
+    **Request**
+    ```json
+    {
+        "order_id": 1 
+    }
+
+- `GET /orders/:order_id/`: Get order payment status
+    **Response**
+    ```json
+    {
+        "id": "example",
+        "amount": 1
+    }
 
 
 ## How to Run
