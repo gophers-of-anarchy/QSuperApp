@@ -28,6 +28,22 @@ type PaymentRequest struct {
 	Amount        int    `json:"Amount"`
 }
 
+type PaymentWithoutOrder struct {
+    ID            uint
+    CreatedAt     time.Time
+    UpdatedAt     time.Time
+    Amount        int
+    PaymentType   int
+    PaymentStatus int
+    OrderID       uint
+}
+
+type PaymentWithoutOrderWithStrings struct {
+    PaymentWithoutOrder
+    PaymentTypeString   string
+    PaymentStatusString string
+}
+
 type MelliPaymentResponse struct {
 	ResCode     int    `json:"ResCode"`
 	Token       string `json:"Token"`
@@ -59,3 +75,28 @@ const (
 	PaymentPending
 	PaymentFailed
 )
+
+var paymentStatuses = []string{
+    "Completed",
+    "Pending",
+    "Failed",
+}
+
+func PaymentStatusToString(status int) string {
+    if status < 0 || status >= len(paymentStatuses) {
+        return "Unknown"
+    }
+    return paymentStatuses[status]
+}
+
+var paymentTypes = []string{
+    "Advance",
+    "Final",
+}
+
+func PaymentTypeToString(paymentType int) string {
+    if paymentType < 0 || paymentType >= len(paymentTypes) {
+        return "Unknown"
+    }
+    return paymentTypes[paymentType]
+}

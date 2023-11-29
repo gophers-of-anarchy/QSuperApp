@@ -77,7 +77,7 @@ func main() {
 	paymentApiGroup.Use(middlewares.AuthMiddleware)
 	paymentApiGroup.POST("/advance", controllers.AdvancePaymentHandler)
 	paymentApiGroup.POST("/finalize", controllers.FinalPaymentHandler)
-	paymentApiGroup.GET("/orders/:orderId", controllers.VerifyPaymentHandler)
+	paymentApiGroup.GET("/orders/:orderId", controllers.GetOrderPaymentDetailsHandler)
 
 	verifyPaymentGroup := apiGroup.Group("/verify")
 	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
