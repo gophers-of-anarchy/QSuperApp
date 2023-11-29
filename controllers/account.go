@@ -4,43 +4,83 @@ import (
 	"QSuperApp/configs"
 	"QSuperApp/messages"
 	"QSuperApp/models"
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
-func CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
-	// Get user ID from context
-	userID := r.Context().Value("user_id").(uint)
-	if userID == 0 {
-		http.Error(w, messages.Unauthorized, http.StatusUnauthorized)
-		return
-	}
-	// Parse the request body to get the account details
-	var accountCreateReq models.AccountCreateRequest
-	err := json.NewDecoder(r.Body).Decode(&accountCreateReq)
+func CreateAccountHandler(ctx echo.Context) error {
+
+	// I think when we check the authorization using middleware
+	// we dont need the 'ok' and we ignore it
+	userID, _ := ctx.Get("user_id").(uint)
+
+	req := models.AccountCreateRequest{}
+
+	err := ctx.Bind(&req)
 	if err != nil {
-		http.Error(w, messages.InvalidRequestBody, http.StatusBadRequest)
-		return
+		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
 	}
 
-	// Create a new account
 	account := models.Account{
-		UserID:    userID,
-		Name:      accountCreateReq.Name,
-		Balance:   accountCreateReq.Balance,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		UserID:  userID,
+		Name:    req.Name,
+		Balance: req.Balance,
 	}
 
-	// Save the new account to the database
 	if result := configs.DB.Create(&account); result.Error != nil {
-		http.Error(w, messages.FailedToCreateAccount, http.StatusInternalServerError)
-		return
+		return ctx.JSON(http.StatusInternalServerError, messages.FailedToCreateAccount)
 	}
 
-	// Respond with the new account
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf(messages.AccountCreatedSuccessfully, account.ID)))
+	response := models.CreateAccountResponse{
+		Message: messages.AccountCreatedSuccessfully,
+		Data:    models.AccountResponseData{Name: req.Name, Balance: fmt.Sprintf("%v", req.Balance)},
+	}
+
+	return ctx.JSON(
+		http.StatusCreated,
+		response,
+	)
+
+}
+
+func UpdateAccount(ctx echo.Context) error {
+
+	userID, _ := ctx.Get("user_id").(uint)
+
+	req := models.UpdateAccountRequest{}
+
+	err := ctx.Bind(&req)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
+	}
+
+	accountID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
+	}
+
+	var account models.Account
+
+	if err := configs.DB.Where("id = ? AND user_id = ?", accountID, userID).First(&account).Error; err != nil {
+		return ctx.JSON(http.StatusBadRequest, messages.AccountNotFound)
+	}
+
+	account.Name = req.Name
+
+	if err := configs.DB.Save(&account).Error; err != nil {
+		return ctx.JSON(http.StatusBadRequest, messages.UpdateAccountFailed)
+	}
+
+	response := models.CreateAccountResponse{
+		Message: messages.AccountUpdatedSuccessfully,
+		Data:    models.AccountResponseData{Name: req.Name, Balance: fmt.Sprintf("%v", account.Balance)},
+	}
+
+	return ctx.JSON(
+		http.StatusOK,
+		response,
+	)
 }

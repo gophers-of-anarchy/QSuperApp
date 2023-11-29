@@ -3,6 +3,7 @@ package main
 import (
 	"QSuperApp/configs"
 	"QSuperApp/controllers"
+	"QSuperApp/middlewares"
 	"log"
 	"os"
 
@@ -53,6 +54,11 @@ func main() {
 	orderManagementApiGroup := apiGroup.Group("/order-management")
 	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
 	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
+
+	// Account routes
+	accountManagementApiGroup := apiGroup.Group("/account")
+	accountManagementApiGroup.POST("/create-account", controllers.CreateAccountHandler, middlewares.AuthMiddleware)
+	accountManagementApiGroup.PATCH("/update-account/:id", controllers.UpdateAccount, middlewares.AuthMiddleware)
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))

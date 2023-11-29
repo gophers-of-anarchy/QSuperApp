@@ -22,6 +22,7 @@ const WrongOrderID = "Wrong ID for order"
 
 const UserNotFound = "User not found"
 const AccountNotFound = "Account not found"
+const UpdateAccountFailed = "Update Account Failed"
 const FailedToCreateCard = "Failed to create card"
 const FailedToCreateAccount = "Failed to create account"
 
@@ -35,3 +36,5 @@ const InvalidToken = "Invalid token"
 
 const InvalidUserType = "Invalid user type"
 const ErrUnauthorizedAccess = "User does not have access"
+
+const UserAlreadyHasAccount = "User already has account"
