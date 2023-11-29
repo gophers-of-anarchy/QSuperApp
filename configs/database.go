@@ -41,6 +41,7 @@ func ConnectToDatabase() {
 		db.AutoMigrate(&models.Payment{})
 		db.AutoMigrate(&models.Role{})
 		db.AutoMigrate(&models.RoleUser{})
+		db.AutoMigrate(&models.Account{})
 
 		// Apply additional migrations
 		// if err := db.Exec("ALTER TABLE users ADD COLUMN new_column VARCHAR(255);").Error; err != nil {
