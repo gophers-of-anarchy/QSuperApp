@@ -68,9 +68,9 @@ func main() {
 
 	// Order routes
 	orderManagementApiGroup := apiGroup.Group("/order-management")
-	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler)
-	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler)
-	orderManagementApiGroup.GET("/admin/orders/list", controllers.GetAllOrderHandler)
+	orderManagementApiGroup.POST("/admin/orders", controllers.DecideOrderStatusHandler, middlewares.AuthAndAdminMiddleware)
+	orderManagementApiGroup.POST("/admin/orders/status", controllers.ChangeOrderStatusHandler, middlewares.AuthAndAdminMiddleware)
+	orderManagementApiGroup.GET("/admin/orders/list", controllers.GetAllOrderHandler, middlewares.AuthAndAdminMiddleware)
 
 	// Payment routes
 	paymentApiGroup := apiGroup.Group("/payment")
@@ -82,12 +82,11 @@ func main() {
 	verifyPaymentGroup := apiGroup.Group("/verify")
 	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
 	verifyPaymentGroup.POST("/payment", controllers.VerifyPaymentHandler)
-  
+
 	// Account routes
 	accountManagementApiGroup := apiGroup.Group("/account")
 	accountManagementApiGroup.POST("/create-account", controllers.CreateAccountHandler, middlewares.AuthMiddleware)
 	accountManagementApiGroup.PATCH("/update-account/:id", controllers.UpdateAccount, middlewares.AuthMiddleware)
-
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))
