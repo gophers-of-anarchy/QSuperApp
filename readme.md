@@ -188,8 +188,19 @@ The application is structured as follows:
     ```json
     {
         "id": "example",
-        "amount": 1
+        "amount": 1.5,
+        "payment_type": 1,
+        "payment_status": 1,
+        "order_id": 1,
+        "created_at": "2000/1/1",
+        "updated_at": "2000/1/1"
     }
+
+### Verify Payment `/api/v1/verify`
+
+- `POST /page`: 
+
+- `POST /payment`
 
 
 ## How to Run
