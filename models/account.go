@@ -17,7 +17,21 @@ type Account struct {
 	Cards []Card `gorm:"foreignKey:AccountID"`
 }
 
+type UpdateAccountRequest struct {
+	Name string `json:"name"`
+}
+
 type AccountCreateRequest struct {
 	Name    string  `json:"name"`
 	Balance float64 `json:"balance"`
+}
+
+type AccountResponseData struct {
+	Name    string
+	Balance string
+}
+
+type CreateAccountResponse struct {
+	Message string              `json:"message"`
+	Data    AccountResponseData `json:"data"`
 }
