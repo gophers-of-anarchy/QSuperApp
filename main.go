@@ -74,16 +74,20 @@ func main() {
 
 	// Payment routes
 	paymentApiGroup := apiGroup.Group("/payment")
+	paymentApiGroup.Use(middlewares.AuthMiddleware)
 	paymentApiGroup.POST("/advance", controllers.AdvancePaymentHandler)
 	paymentApiGroup.POST("/finalize", controllers.FinalPaymentHandler)
-	paymentApiGroup.POST("/verifypage", controllers.VerifyPaymentPageHandler)
-	paymentApiGroup.POST("/verify", controllers.VerifyPaymentHandler)
 	paymentApiGroup.GET("/orders/:orderId", controllers.VerifyPaymentHandler)
 
+	verifyPaymentGroup := apiGroup.Group("/verify")
+	verifyPaymentGroup.POST("/page", controllers.VerifyPaymentPageHandler)
+	verifyPaymentGroup.POST("/payment", controllers.VerifyPaymentHandler)
+  
 	// Account routes
 	accountManagementApiGroup := apiGroup.Group("/account")
 	accountManagementApiGroup.POST("/create-account", controllers.CreateAccountHandler, middlewares.AuthMiddleware)
 	accountManagementApiGroup.PATCH("/update-account/:id", controllers.UpdateAccount, middlewares.AuthMiddleware)
+
 
 	// Run Server
 	e.Logger.Fatal(e.Start(":8080"))

@@ -15,7 +15,7 @@ type Payment struct {
 }
 
 type AdvancePaymentRequest struct {
-	OrderId string
+	OrderId uint `json:"order_id"`
 }
 
 type PaymentRequest struct {

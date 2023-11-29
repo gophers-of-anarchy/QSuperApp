@@ -17,7 +17,7 @@ import (
 
 func AdvancePaymentHandler(ctx echo.Context) error {
 	// Get user ID from context
-	userID := ctx.Get("user_id").(string)
+	userID := ctx.Get("user_id")
 
 	var req models.AdvancePaymentRequest
 	err := ctx.Bind(&req)
@@ -30,6 +30,12 @@ func AdvancePaymentHandler(ctx echo.Context) error {
 	if errors.Is(orderResult.Error, gorm.ErrRecordNotFound) {
 		log.Println("Order not found:", orderResult.Error)
 		return ctx.JSON(http.StatusNotFound, messages.OrderNotFound)
+	}
+	var advancePayment models.Payment
+
+	completedAdvancePayment := configs.DB.Where("order_id = ? AND payment_type = ? AND payment_status = ?", order.ID, models.AdvancePayment, models.PaymentCompleted).First(&advancePayment)
+	if completedAdvancePayment.Error == nil {
+		return ctx.JSON(http.StatusBadRequest, messages.AdvanceIsAlreadyDone)
 	}
 
 	var customization models.Customization
@@ -76,7 +82,7 @@ func AdvancePaymentHandler(ctx echo.Context) error {
 
 func FinalPaymentHandler(ctx echo.Context) error {
 	// Get user ID from context
-	userID := ctx.Get("user_id").(string)
+	userID := ctx.Get("user_id")
 
 	var req models.AdvancePaymentRequest
 	err := ctx.Bind(&req)
@@ -91,6 +97,12 @@ func FinalPaymentHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusNotFound, messages.OrderNotFound)
 	}
 
+	var finalPayment models.Payment
+	completedFinalPayment := configs.DB.Where("order_id = ? AND payment_type = ? AND payment_status = ?", order.ID, models.FinalPayment, models.PaymentCompleted).First(&finalPayment)
+	if completedFinalPayment.Error == nil {
+		return ctx.JSON(http.StatusBadRequest, messages.FinalIsAlreadyDone)
+	}
+
 	var customization models.Customization
 	customizationResult := configs.DB.Where("order_id = ?", order.ID).First(&customization)
 	if errors.Is(customizationResult.Error, gorm.ErrRecordNotFound) {
@@ -100,16 +112,15 @@ func FinalPaymentHandler(ctx echo.Context) error {
 
 	totalPrice := helpers.CalculateAirplaneTotalPrice(customization)
 	var paymentAmount float64
+
 	var advancePayment models.Payment
-	advancePaymentResult := configs.DB.Where("order_id = ? AND payment_type = ?", order.ID, models.AdvancePayment).First(&advancePayment)
-	if errors.Is(advancePaymentResult.Error, gorm.ErrRecordNotFound) {
-		log.Println("Advance payment not found:", advancePaymentResult.Error)
-		return ctx.JSON(http.StatusNotFound, messages.PaymentNotFound)
-	}
-	if advancePayment.PaymentStatus != models.PaymentCompleted {
-		paymentAmount = totalPrice
-	}else {
+
+	completedAdvancePayment := configs.DB.Where("order_id = ? AND payment_type = ? AND payment_status = ?", order.ID, models.AdvancePayment, models.PaymentCompleted).First(&advancePayment)
+
+	if completedAdvancePayment.Error == nil {
 		paymentAmount = totalPrice * 0.5
+	} else {
+		paymentAmount = totalPrice
 	}
 
 	// create a payment record
@@ -191,10 +202,13 @@ func VerifyPaymentHandler(ctx echo.Context) error {
 
 	resp, err := services.VerifyPayment(requestData["Token"].(string))
 	if err != nil {
+		if result := configs.DB.Model(&payment).Updates(models.Payment{PaymentStatus: models.PaymentFailed, UpdatedAt: time.Now()}); result.Error != nil {
+			log.Println("Error updating payment:", result.Error)
+			return ctx.JSON(http.StatusInternalServerError, messages.PaymentError)
+		}
 		log.Println("Error verifying payment:", err)
 		return ctx.JSON(http.StatusInternalServerError, messages.PaymentVerificationError)
 	}
-
 	if resp.ResCode != 0 {
 		if result := configs.DB.Model(&payment).Updates(models.Payment{PaymentStatus: models.PaymentFailed, UpdatedAt: time.Now()}); result.Error != nil {
 			log.Println("Error updating payment:", result.Error)
@@ -203,7 +217,8 @@ func VerifyPaymentHandler(ctx echo.Context) error {
 		log.Println("Error verifying payment:", resp.Description)
 		return ctx.JSON(http.StatusInternalServerError, messages.PaymentVerificationError)
 	}
-	if result := configs.DB.Model(&payment).Updates(models.Payment{PaymentStatus: models.PaymentCompleted, UpdatedAt: time.Now()}); result.Error != nil {
+	result := configs.DB.Model(&payment).UpdateColumn("PaymentStatus", models.PaymentCompleted).UpdateColumn("UpdatedAt", time.Now())
+	if result.Error != nil {
 		log.Println("Error updating payment:", result.Error)
 		return ctx.JSON(http.StatusInternalServerError, messages.PaymentError)
 	}
