@@ -6,7 +6,6 @@ import (
 	"QSuperApp/models"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,6 +17,12 @@ func CreateAccountHandler(ctx echo.Context) error {
 	userID, _ := ctx.Get("user_id").(uint)
 
 	req := models.AccountCreateRequest{}
+
+	var checkUser = models.Account{UserID: userID}
+	foundAccount := configs.DB.First(&checkUser)
+	if foundAccount == nil {
+		return ctx.JSON(http.StatusBadRequest, messages.UserAlreadyHasAccount)
+	}
 
 	err := ctx.Bind(&req)
 	if err != nil {
@@ -40,47 +45,8 @@ func CreateAccountHandler(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(
-		http.StatusCreated,
-		response,
-	)
-
-}
-
-func UpdateAccount(ctx echo.Context) error {
-
-	userID, _ := ctx.Get("user_id").(uint)
-
-	req := models.UpdateAccountRequest{}
-
-	err := ctx.Bind(&req)
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
-	}
-
-	accountID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, messages.InvalidRequestBody)
-	}
-
-	var account models.Account
-
-	if err := configs.DB.Where("id = ? AND user_id = ?", accountID, userID).First(&account).Error; err != nil {
-		return ctx.JSON(http.StatusBadRequest, messages.AccountNotFound)
-	}
-
-	account.Name = req.Name
-
-	if err := configs.DB.Save(&account).Error; err != nil {
-		return ctx.JSON(http.StatusBadRequest, messages.UpdateAccountFailed)
-	}
-
-	response := models.CreateAccountResponse{
-		Message: messages.AccountUpdatedSuccessfully,
-		Data:    models.AccountResponseData{Name: req.Name, Balance: fmt.Sprintf("%v", account.Balance)},
-	}
-
-	return ctx.JSON(
 		http.StatusOK,
 		response,
 	)
+
 }

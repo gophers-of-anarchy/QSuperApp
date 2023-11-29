@@ -43,3 +43,5 @@ const InvalidUserType = "Invalid user type"
 const ErrUnauthorizedAccess = "User does not have access"
 
 const UserAlreadyHasAccount = "User already has account"
+const ErrorFetchingAccounts = "Error fetching accounts"
+const UserUpdatedSuccefully = "User Updated succefully"
